@@ -1,0 +1,9 @@
+# Logs — don't commit runtime data
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Claude session data
+.claude/
