@@ -7,3 +7,5 @@ __pycache__/
 
 # Claude session data
 .claude/
+.venv/
+summary.md
