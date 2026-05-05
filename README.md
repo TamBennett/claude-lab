@@ -57,3 +57,7 @@ python3 scripts/claude_cli.py --mode multi
 - MCP servers extend Claude's toolset; stdio transport is standard for local servers
 - `--print` mode makes Claude Code scriptable but skips hooks — log at the script level instead
 - The Anthropic SDK is the layer underneath Claude Code and Cowork
+
+## M0.4 Practice
+
+Testing Git inside VS Code — Source Control panel, diffs, and commits.
