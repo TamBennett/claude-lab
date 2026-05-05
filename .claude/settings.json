@@ -1,7 +1,13 @@
 {
   "permissions": {
-    "allow": ["Bash(ls:*)", "Bash(cat:*)", "Read(*)"],
-    "deny": ["Bash(rm:*)"]
+    "allow": [
+      "Bash(ls:*)",
+      "Bash(cat:*)",
+      "Read(*)"
+    ],
+    "deny": [
+      "Bash(rm:*)"
+    ]
   },
   "hooks": {
     "PreToolUse": [
@@ -10,7 +16,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 /Users/tambennett/claude-lab/hooks/log_tool_calls.py"
+            "command": "python3 hooks/log_tool_calls.py"
           }
         ]
       }
@@ -18,13 +24,11 @@
   },
   "mcpServers": {
     "filesystem": {
-      "command": "npx",
+      "command": "sh",
       "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/Users/tambennett/claude-lab"
-      ],
-      "transport": "stdio"
+        "-c",
+        "npx -y @modelcontextprotocol/server-filesystem \"$PWD\""
+      ]
     }
   }
 }
