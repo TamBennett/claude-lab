@@ -5,3 +5,4 @@
 - Hook logging demo is the most impressive technical piece
 - Consider a "break it on purpose" exercise so people see failure modes
 - Need a quick reference card — one page, key commands
+Practice branch test
