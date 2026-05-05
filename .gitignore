@@ -9,3 +9,4 @@ __pycache__/
 .claude/
 .venv/
 summary.md
+.DS-Store
