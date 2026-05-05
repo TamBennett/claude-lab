@@ -1,26 +1,12 @@
 # claude-lab
 
-# claude-lab
+A hands-on learning project for Claude Code CLI mastery — hooks, scripts, and SDK usage built as part of a structured training program toward Claude Certified Architect proficiency.
 
-Learning project for Claude Code CLI mastery. Built as part of a structured training development program.
+## Prerequisites
 
-## What's here
-
-### Hooks
-
-`hooks/log_tool_calls.py` — PreToolUse hook that logs every Claude tool call to `tool_calls.log`.  
-Captures: timestamp, session ID, hook event, tool name, tool input.
-
-### Scripts
-
-`scripts/summarize_notes.py` — reads all `.md` files in `notes/` and produces a structured `summary.md` using Claude Code (`--print` mode).  
-`scripts/claude_cli.py` — CLI tool demonstrating direct Anthropic SDK usage: simple call, streaming, and multi-turn conversation.
-
-### Config
-
-`.claude/settings.json` — project-level permissions (allow/deny rules) and hook wiring.  
-`.mcp.json` — filesystem MCP server config (note: user-scoped in `~/.claude.json` due to macOS PATH constraints).  
-`CLAUDE.md` — project-level Claude instructions.
+- [Claude Code CLI](https://docs.claude.com) installed and authenticated
+- Python 3.9+
+- `ANTHROPIC_API_KEY` set in your environment
 
 ## Setup
 
@@ -29,35 +15,49 @@ Captures: timestamp, session ID, hook event, tool name, tool input.
 git clone https://github.com/TamBennett/claude-lab.git
 cd claude-lab
 
-# Python dependencies (for SDK scripts)
+# Create virtual environment and install SDK
 python3 -m venv .venv
 source .venv/bin/activate
 pip install anthropic
 
-# Set your API key
+# Set your API key (add to ~/.zprofile for persistence)
 export ANTHROPIC_API_KEY="your-key-here"
+```
+
+## Project Structure
+
+```
+claude-lab/
+├── hooks/
+│   ├── log_tool_calls.py     # PreToolUse hook — logs all tool calls to tool_calls.log
+│   └── debug_event.py        # Hook event payload inspector
+├── notes/                    # Markdown notes consumed by summarize_notes.py
+├── scripts/
+│   ├── summarize_notes.py    # Reads notes/, produces summary.md via Claude Code --print
+│   └── claude_cli.py         # Direct Anthropic SDK: simple call, streaming, multi-turn
+├── .claude/
+│   └── settings.json         # Project-level permissions and hook wiring
+├── .mcp.json                 # Filesystem MCP server config
+└── CLAUDE.md                 # Project-level Claude instructions
 ```
 
 ## Usage
 
 ```bash
-# Summarize notes
+# Summarize all markdown notes
 python3 scripts/summarize_notes.py --notes-dir notes --output summary.md
 
 # Call Claude directly via SDK
-python3 scripts/claude_cli.py --mode simple
-python3 scripts/claude_cli.py --mode stream
-python3 scripts/claude_cli.py --mode multi
+python3 scripts/claude_cli.py --mode simple    # single-turn completion
+python3 scripts/claude_cli.py --mode stream    # streaming response
+python3 scripts/claude_cli.py --mode multi     # multi-turn conversation
 ```
 
-## Key lessons
+## Key Lessons
 
-- CLAUDE.md scopes instructions at global and project level
-- Hooks fire on PreToolUse — full audit trail for every tool call
-- MCP servers extend Claude's toolset; stdio transport is standard for local servers
+- `CLAUDE.md` scopes instructions at global (`~/.claude/CLAUDE.md`) and project level
+- Hooks fire on `PreToolUse` — full audit trail for every tool call across sub-agents
+- `CLAUDE_SESSION_ID` env var is unreliable in sub-agents; read `session_id` from the hook's stdin payload instead
 - `--print` mode makes Claude Code scriptable but skips hooks — log at the script level instead
-- The Anthropic SDK is the layer underneath Claude Code and Cowork
-
-## M0.4 Practice
-
-Testing Git inside VS Code — Source Control panel, diffs, and commits.
+- MCP servers on macOS with Homebrew require the full binary path (`/opt/homebrew/bin/npx`)
+- The Anthropic Python SDK is the foundation layer underneath Claude Code and Cowork

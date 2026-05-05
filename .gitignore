@@ -4,9 +4,22 @@
 # Python
 __pycache__/
 *.pyc
-
-# Claude session data
-.claude/
+*.pyo
+*.pyd
 .venv/
+
+# Environment / secrets — NEVER commit API keys
+.env
+.env.*
+!.env.example
+
+# Generated output
 summary.md
+
+# Claude session data — ignore generated state, but track config
+.claude/settings.local.json
+.claude/worktrees/
+
+# macOS
 .DS_Store
+.AppleDouble
