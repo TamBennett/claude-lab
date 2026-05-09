@@ -3,6 +3,7 @@
 summarize_notes.py — reads all .md files in a notes/ directory
 and uses Claude Code (subprocess) to produce a structured summary.
 """
+
 import argparse
 import subprocess
 import sys
@@ -47,19 +48,20 @@ Write the summary as a markdown document with a title and date stamp."""
 def run_claude(prompt: str, output_path: Path) -> None:
     """Pass the prompt to Claude Code via subprocess and capture output."""
     from datetime import datetime
+
     log_path = Path.home() / "claude-lab" / "tool_calls.log"
 
     start = datetime.now().isoformat()
     result = subprocess.run(
-        ["claude", "--print", prompt],
-        capture_output=True,
-        text=True
+        ["claude", "--print", prompt], capture_output=True, text=True
     )
     end = datetime.now().isoformat()
 
     with open(log_path, "a") as f:
         f.write(f"{start} | script | summarize_notes | started\n")
-        f.write(f"{end} | script | summarize_notes | completed | returncode={result.returncode}\n")
+        f.write(
+            f"{end} | script | summarize_notes | completed | returncode={result.returncode}\n"
+        )
 
     if result.returncode != 0:
         print(f"Claude error:\n{result.stderr}")
@@ -71,7 +73,9 @@ def run_claude(prompt: str, output_path: Path) -> None:
 
 def main():
     parser = argparse.ArgumentParser(description="Summarize notes using Claude Code")
-    parser.add_argument("--notes-dir", default="notes", help="Directory containing .md notes")
+    parser.add_argument(
+        "--notes-dir", default="notes", help="Directory containing .md notes"
+    )
     parser.add_argument("--output", default="summary.md", help="Output file path")
     args = parser.parse_args()
 
