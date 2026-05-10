@@ -12,5 +12,6 @@
     ".venv": true
   },
   "editor.tabSize": 4,
-  "editor.insertSpaces": true
+  "editor.insertSpaces": true,
+  "python.terminal.useEnvFile": false
 }
