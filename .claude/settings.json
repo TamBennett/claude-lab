@@ -16,7 +16,18 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 hooks/log_tool_calls.py"
+            "command": "python3 /Users/tambennett/claude-lab/hooks/log_tool_calls.py"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": ".*",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 /Users/tambennett/claude-lab/hooks/log_tool_calls.py"
           }
         ]
       }

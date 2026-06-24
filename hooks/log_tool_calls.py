@@ -1,10 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 import json
 import sys
 from datetime import datetime
 from pathlib import Path
 
 log_path = Path.home() / "claude-lab" / "tool_calls.log"
+
 
 def main():
     event = json.load(sys.stdin)
@@ -15,7 +16,16 @@ def main():
     timestamp = datetime.now().isoformat()
 
     with open(log_path, "a") as f:
-        f.write(f"{timestamp} | {session_id} | {hook_event} | {tool} | {json.dumps(tool_input)}\n")
+        f.write(
+            f"{timestamp} | {session_id} | {hook_event} | {tool} | {json.dumps(tool_input)}\n"
+        )
+
+        if hook_event == "PostToolUse":
+            tool_response = event.get("tool_response", {})
+            f.write(
+                f"{timestamp} | {session_id} | RESPONSE | {tool} | {json.dumps(tool_response)}\n"
+            )
+
 
 if __name__ == "__main__":
     main()
