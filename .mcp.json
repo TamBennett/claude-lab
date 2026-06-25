@@ -1,3 +1,8 @@
 {
-  "mcpServers": {}
+  "mcpServers": {
+    "notes": {
+      "command": "/Users/tambennett/claude-lab/.venv/bin/python",
+      "args": ["/Users/tambennett/claude-lab/mcp_servers/notes_server.py"]
+    }
+  }
 }
