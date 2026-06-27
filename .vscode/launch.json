@@ -42,6 +42,40 @@
       "port": 9222,
       "webRoot": "${workspaceFolder}",
       "sourceMaps": true
+    },
+    {
+      "name": "FastAPI: backend",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "uvicorn",
+      "args": ["main:app", "--port", "8000"],
+      "cwd": "${workspaceFolder}/backend",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "env": { "ANTHROPIC_API_KEY": "${env:ANTHROPIC_API_KEY}" }
+    },
+    {
+      "name": "Vite: frontend",
+      "type": "node",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/frontend",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": ["run", "dev"],
+      "console": "integratedTerminal"
+    },
+    {
+      "name": "Chrome: open app",
+      "type": "chrome",
+      "request": "launch",
+      "url": "http://localhost:5173",
+      "webRoot": "${workspaceFolder}/frontend"
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full stack: FastAPI + Vite",
+      "configurations": ["FastAPI: backend", "Vite: frontend", "Chrome: open app"],
+      "stopAll": true
     }
   ]
 }
