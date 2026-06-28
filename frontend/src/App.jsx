@@ -11,26 +11,53 @@ function App() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage = { role: "user", content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const text = input;
+    setMessages(prev => [...prev, { role: "user", content: text }]);
     setInput("");
     setLoading(true);
     setError(null);
 
+    // add an empty assistant message; we'll append streamed tokens to it
+    setMessages(prev => [...prev, { role: "assistant", content: "" }]);
+
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/chat`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/chat/stream`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ message: text }),
       });
 
-      if (!res.ok) {
-        const err = await res.json();
-        throw new Error(err.detail ?? `HTTP ${res.status}`);
-      }
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
-      const data = await res.json();
-      setMessages(prev => [...prev, { role: "assistant", content: data.reply }]);
+      const reader = res.body.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+
+        buffer += decoder.decode(value, { stream: true });
+
+        // SSE frames are separated by a blank line
+        const frames = buffer.split("\n\n");
+        buffer = frames.pop();            // keep the last, maybe-incomplete frame
+
+        for (const frame of frames) {
+          const line = frame.trim();
+          if (!line.startsWith("data:")) continue;
+          const payload = line.slice(5).trim();
+          if (payload === "[DONE]") continue;
+
+          const token = JSON.parse(payload);   // backend json.dumps'd each delta
+          setMessages(prev => {
+            const updated = [...prev];
+            const last = updated[updated.length - 1];
+            updated[updated.length - 1] = { ...last, content: last.content + token };
+            return updated;
+          });
+        }
+      }
     } catch (err) {
       setError(err.message);
     } finally {
