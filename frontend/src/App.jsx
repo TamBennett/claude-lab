@@ -21,7 +21,7 @@ function App() {
     setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/chat/stream`, {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/v1/chat/agent`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text }),
@@ -49,13 +49,26 @@ function App() {
           const payload = line.slice(5).trim();
           if (payload === "[DONE]") continue;
 
-          const token = JSON.parse(payload);   // backend json.dumps'd each delta
-          setMessages(prev => {
-            const updated = [...prev];
-            const last = updated[updated.length - 1];
-            updated[updated.length - 1] = { ...last, content: last.content + token };
-            return updated;
-          });
+          const event = JSON.parse(payload);
+
+          if (event.type === "text") {
+            setMessages(prev => {
+              const updated = [...prev];
+              const last = updated[updated.length - 1];
+              updated[updated.length - 1] = { ...last, content: last.content + event.text };
+              return updated;
+            });
+          } else if (event.type === "tool_use") {
+            setMessages(prev => {
+              const updated = [...prev];
+              const last = updated[updated.length - 1];
+              const note = `\n\n🔧 calling ${event.name}…\n\n`;
+              updated[updated.length - 1] = { ...last, content: last.content + note };
+              return updated;
+            });
+          } else if (event.type === "error") {
+            setError(event.error);
+          };
         }
       }
     } catch (err) {
