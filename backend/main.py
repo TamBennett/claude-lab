@@ -1,26 +1,30 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from dotenv import load_dotenv
 import json
 from anthropic import AsyncAnthropic
 from fastapi.responses import StreamingResponse
 from datetime import datetime
+from config import get_settings
 # import os
 
-load_dotenv()
+settings = get_settings()
 
-app = FastAPI()
+client = AsyncAnthropic(api_key=settings.anthropic_api_key)
+MODEL = settings.model
+
+# app = FastAPI()
+app = FastAPI(docs_url=None if settings.is_production else "/docs")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173"],
+    allow_origins=[settings.cors_origins],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
-client = AsyncAnthropic()  # reads ANTHROPIC_API_KEY from env (load_dotenv already ran)
-MODEL = "claude-haiku-4-5-20251001"
+# client = AsyncAnthropic()  # reads ANTHROPIC_API_KEY from env (load_dotenv already ran)
+# MODEL = "claude-haiku-4-5-20251001"
 
 
 def get_current_time() -> str:
