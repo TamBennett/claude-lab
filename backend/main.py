@@ -13,6 +13,8 @@ settings = get_settings()
 client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 MODEL = settings.model
 
+print(MODEL)
+
 # app = FastAPI()
 app = FastAPI(docs_url=None if settings.is_production else "/docs")
 

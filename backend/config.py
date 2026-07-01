@@ -40,7 +40,8 @@ class Settings(BaseSettings):
     # UPPER_SNAKE env variable
     anthropic_api_key: str
     app_env: AppEnv = AppEnv.development
-    model: str = "claude-haiku-4-5-20251001"
+    # model: str = "claude-haiku-4-5-20251001"
+    model: str = "claude-sonnet-5"
     cors_origins: str = "http://localhost:5173"
 
     @property
